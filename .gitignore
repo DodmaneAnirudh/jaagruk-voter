@@ -1,0 +1,20 @@
+# --- Dependencies (Must Ignore) ---
+node_modules/
+
+# --- Environment Secrets (Must Ignore) ---
+.env
+
+# --- System Files ---
+.DS_Store
+
+# --- Databases & Logs ---
+*.db
+*.sqlite
+*.log
+
+# --- User Data (Ignore actual data, but keep structure) ---
+# This prevents uploading your local search history
+# BUT we assume your code creates this file if it's missing.
+backend/data/search_history.json
+
+# Note: We are NOT ignoring package.json or the backend folder!

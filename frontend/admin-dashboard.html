@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JaagrukVoter - Admin Dashboard</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    
+    /* Custom Scrollbar for tables */
+    .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+        background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+              <div class="flex items-center">
+                  <h1 class="text-xl font-bold text-sky-700 flex items-center gap-2">
+                      <span>🛡️</span> Jaagruk Admin
+                  </h1>
+              </div>
+              <div class="flex items-center gap-4">
+                  <div class="text-right hidden sm:block">
+                      <p class="text-xs text-slate-500">Logged in as</p>
+                      <p id="adminEmail" class="text-sm font-semibold text-slate-700">Loading...</p>
+                  </div>
+                  <button
+                    id="logoutBtn"
+                    class="bg-white border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    Logout
+                  </button>
+              </div>
+          </div>
+      </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Total Logins -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Logins</h2>
+        <div class="flex items-baseline mt-2">
+            <p id="totalLogins" class="text-3xl font-bold text-slate-800">0</p>
+            <span class="ml-2 text-sm text-green-600 font-medium">All time</span>
+        </div>
+      </div>
+      
+      <!-- Guest Logins -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Guest Users</h2>
+        <div class="flex items-baseline mt-2">
+            <p id="guestLogins" class="text-3xl font-bold text-slate-800">0</p>
+            <span class="ml-2 text-sm text-slate-400 font-medium">Anonymous</span>
+        </div>
+      </div>
+      
+      <!-- Total Searches -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Searches</h2>
+        <div class="flex items-baseline mt-2">
+            <p id="totalSearches" class="text-3xl font-bold text-sky-600">0</p>
+            <span class="ml-2 text-sm text-sky-600 font-medium">Queries processed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Pie Chart -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+            <span class="w-1.5 h-6 bg-sky-500 rounded-sm"></span>
+            User Demographics
+        </h2>
+        <div class="h-64 flex justify-center">
+            <canvas id="guestChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Line Chart -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+            <span class="w-1.5 h-6 bg-green-500 rounded-sm"></span>
+            Daily Login Activity
+        </h2>
+        <div class="h-64">
+            <canvas id="loginsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Queries (Bar Chart) -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <span class="w-1.5 h-6 bg-purple-500 rounded-sm"></span>
+          Top Search Trends
+      </h2>
+      <div class="h-64">
+          <canvas id="queriesChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Data Tables Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      
+      <!-- Login History -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[500px]">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h2 class="font-bold text-slate-700">Recent Logins</h2>
+          <span class="text-xs text-slate-500 font-medium bg-white px-2 py-1 rounded border">Latest 50</span>
+        </div>
+        <div class="overflow-y-auto custom-scroll flex-1 p-0">
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-slate-50 text-slate-500 font-medium sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th class="px-6 py-3 w-1/3">User</th>
+                <th class="px-6 py-3">Type</th>
+                <th class="px-6 py-3">Time</th>
+                <th class="px-6 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="loginsTable" class="divide-y divide-slate-100">
+                <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Search History -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[500px]">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h2 class="font-bold text-slate-700">Recent Searches</h2>
+          <span class="text-xs text-slate-500 font-medium bg-white px-2 py-1 rounded border">Real-time</span>
+        </div>
+        <div class="overflow-y-auto custom-scroll flex-1 p-0">
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-slate-50 text-slate-500 font-medium sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th class="px-6 py-3 w-1/3">Query</th>
+                <th class="px-6 py-3">Lang</th>
+                <th class="px-6 py-3">Time</th>
+                <th class="px-6 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="searchTable" class="divide-y divide-slate-100">
+                <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://jaagrukvoter-backend-2.onrender.com";
+    const token = localStorage.getItem("adminToken");
+
+    // 1. Auth Check
+    if (!token) {
+      // Reverted to standard assignment to avoid strict URL validation errors in blob/preview environments
+      window.location.href = "admin-login.html";
+    }
+
+    // 2. DOM Elements
+    const DOM = {
+        email: document.getElementById("adminEmail"),
+        logout: document.getElementById("logoutBtn"),
+        stats: {
+            logins: document.getElementById("totalLogins"),
+            guests: document.getElementById("guestLogins"),
+            searches: document.getElementById("totalSearches")
+        },
+        tables: {
+            logins: document.getElementById("loginsTable"),
+            searches: document.getElementById("searchTable")
+        }
+    };
+
+    let charts = { guest: null, logins: null, queries: null };
+
+    // 3. Logout Handler
+    DOM.logout.addEventListener("click", () => {
+      localStorage.removeItem("adminToken");
+      // Reverted to standard assignment
+      window.location.href = "admin-login.html";
+    });
+
+    // 4. Utility Functions
+    function formatTime(ts) {
+      try {
+        const d = new Date(ts);
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + 
+               ' ' + 
+               d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+      } catch {
+        return ts;
+      }
+    }
+
+    async function fetchJSON(url, options = {}) {
+      const res = await fetch(url, {
+        ...options,
+        headers: { Authorization: "Bearer " + token, ...options.headers }
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem("adminToken");
+          // Reverted to standard assignment
+          window.location.href = "admin-login.html";
+          return null;
+        }
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Request failed");
+      }
+      return res.json();
+    }
+
+    // 5. Data Loading
+    async function loadData() {
+      try {
+        // Fetch all data in parallel
+        const [loginsRes, searchRes, statsRes] = await Promise.all([
+          fetchJSON(`${API_BASE}/api/admin/logins`),
+          fetchJSON(`${API_BASE}/api/admin/search-history`),
+          fetchJSON(`${API_BASE}/api/admin/stats`)
+        ]);
+
+        // If auth failed, fetchJSON handles redirect, return here to avoid errors
+        if(!loginsRes && !searchRes && !statsRes) return;
+
+        const logins = loginsRes?.entries || [];
+        const searches = searchRes?.entries || [];
+        const stats = statsRes || {};
+
+        // --- UPDATE STATS ---
+        DOM.stats.logins.textContent = logins.length.toLocaleString();
+        DOM.stats.searches.textContent = searches.length.toLocaleString();
+
+        const guestEntry = (stats.guestBreakdown || []).find(g => g.guest === 1);
+        DOM.stats.guests.textContent = guestEntry ? guestEntry.count.toLocaleString() : 0;
+
+        // --- RENDER TABLES ---
+        
+        // Logins Table
+        DOM.tables.logins.innerHTML = logins.map(row => `
+          <tr class="hover:bg-slate-50 transition-colors group">
+            <td class="px-6 py-3 font-medium text-slate-700 truncate max-w-[150px]" title="${row.email || 'Guest'}">
+                ${row.is_guest ? '<span class="text-slate-400 italic">Guest User</span>' : row.email}
+            </td>
+            <td class="px-6 py-3">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${row.is_guest ? 'bg-slate-100 text-slate-600' : 'bg-sky-100 text-sky-700'}">
+                    ${row.is_guest ? "Guest" : "Registered"}
+                </span>
+            </td>
+            <td class="px-6 py-3 text-slate-500 text-xs">${formatTime(row.timestamp)}</td>
+            <td class="px-6 py-3 text-right">
+              <button data-id="${row.id}" class="del-login text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded transition-all opacity-0 group-hover:opacity-100" title="Delete record">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        // Searches Table
+        DOM.tables.searches.innerHTML = searches.map(row => `
+          <tr class="hover:bg-slate-50 transition-colors group">
+            <td class="px-6 py-3 font-medium text-slate-700 truncate max-w-[200px]" title="${row.query}">
+                ${row.query}
+            </td>
+            <td class="px-6 py-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                    ${row.language ? row.language.substring(0,2).toUpperCase() : "EN"}
+                </span>
+            </td>
+            <td class="px-6 py-3 text-slate-500 text-xs">${formatTime(row.timestamp)}</td>
+            <td class="px-6 py-3 text-right">
+              <button data-id="${row.id}" class="del-search text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded transition-all opacity-0 group-hover:opacity-100" title="Delete record">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        // --- RENDER CHARTS ---
+        renderCharts(stats);
+
+        // --- SET ADMIN INFO ---
+        try {
+          // Safe decoding of JWT body
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const payload = JSON.parse(window.atob(base64));
+          DOM.email.textContent = payload.email || "Admin User";
+        } catch {
+          DOM.email.textContent = "Admin";
+        }
+
+      } catch (err) {
+        console.error("Dashboard Load Error:", err);
+      }
+    }
+
+    // 6. Delete Event Delegation (Efficient)
+    document.addEventListener('click', async (e) => {
+        const btnLogin = e.target.closest('.del-login');
+        const btnSearch = e.target.closest('.del-search');
+
+        if (btnLogin) {
+            const id = btnLogin.dataset.id;
+            if (confirm("Permanently delete this login record?")) {
+                try {
+                    await fetchJSON(`${API_BASE}/api/admin/logins/${id}`, { method: 'DELETE' });
+                    loadData(); // Refresh UI
+                } catch(e) { alert("Delete failed."); }
+            }
+        }
+
+        if (btnSearch) {
+            const id = btnSearch.dataset.id;
+            if (confirm("Permanently delete this search record?")) {
+                try {
+                    await fetchJSON(`${API_BASE}/api/admin/search-history/${id}`, { method: 'DELETE' });
+                    loadData(); // Refresh UI
+                } catch(e) { alert("Delete failed."); }
+            }
+        }
+    });
+
+    // 7. Chart Rendering Logic
+    function renderCharts(stats) {
+        const guestData = stats.guestBreakdown || [];
+        const guests = guestData.find((g) => g.guest === 1)?.count || 0;
+        const registered = guestData.find((g) => g.guest === 0)?.count || 0;
+
+        const loginDays = (stats.loginsPerDay || []).map((r) => new Date(r.day).toLocaleDateString(undefined, {month:'short', day:'numeric'}));
+        const loginCounts = (stats.loginsPerDay || []).map((r) => r.count);
+
+        const queryLabels = (stats.topQueries || []).map((q) => q.query);
+        const queryCounts = (stats.topQueries || []).map((q) => q.count);
+
+        // Clean up old instances
+        if (charts.guest) charts.guest.destroy();
+        if (charts.logins) charts.logins.destroy();
+        if (charts.queries) charts.queries.destroy();
+
+        // Guest vs Registered (Doughnut)
+        charts.guest = new Chart(document.getElementById("guestChart"), {
+          type: "doughnut",
+          data: {
+            labels: ["Registered", "Guests"],
+            datasets: [{
+              data: [registered, guests],
+              backgroundColor: ['#0ea5e9', '#cbd5e1'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
+              cutout: '70%'
+          }
+        });
+
+        // Daily Logins (Line)
+        charts.logins = new Chart(document.getElementById("loginsChart"), {
+          type: "line",
+          data: {
+            labels: loginDays,
+            datasets: [{
+              label: "Logins",
+              data: loginCounts,
+              borderColor: '#22c55e',
+              backgroundColor: (context) => {
+                const ctx = context.chart.ctx;
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                gradient.addColorStop(0, "rgba(34, 197, 94, 0.2)");
+                gradient.addColorStop(1, "rgba(34, 197, 94, 0)");
+                return gradient;
+              },
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                  y: { beginAtZero: true, grid: { borderDash: [2, 2] } },
+                  x: { grid: { display: false } }
+              }
+          }
+        });
+
+        // Top Queries (Bar)
+        charts.queries = new Chart(document.getElementById("queriesChart"), {
+          type: "bar",
+          data: {
+            labels: queryLabels,
+            datasets: [{
+              label: "Searches",
+              data: queryCounts,
+              backgroundColor: '#a855f7',
+              borderRadius: 4,
+              barThickness: 20
+            }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                  y: { beginAtZero: true, grid: { display: false } },
+                  x: { grid: { display: false } }
+              }
+          }
+        });
+    }
+
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>

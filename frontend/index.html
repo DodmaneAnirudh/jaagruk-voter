@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JaagrukVoter - Clear Ballot India</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0284c7, #0ea5e9);
+            --bg-gradient: linear-gradient(270deg, #e0f2fe, #f0f9ff, #bae6fd);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 600% 600%;
+            animation: animatedBackground 16s ease infinite;
+        }
+
+        @keyframes animatedBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bfdbfe;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #93c5fd;
+        }
+
+        /* Spinner Animation */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: #0ea5e9;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mystery Bottle Hover Effect */
+        #mysteryBottle {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #mysteryBottle:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        /* Chatbox Transition */
+        #chatBox {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #chatBox.hidden-chat {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        /* Money Rain Element */
+        .money-drop {
+            position: fixed;
+            top: -50px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-900 min-h-screen">
+    
+    <!-- Main container -->
+    <main class="container mx-auto max-w-4xl p-4 pt-8 md:pt-12">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-sky-800 tracking-tight">JaagrukVoter</h1>
+            <p class="text-lg text-gray-700 mt-2 font-medium">Clear, unbiased facts on Indian candidates & policies.</p>
+        </header>
+
+        <!-- Configuration & Input Section -->
+        <section class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/50 mb-8">
+            
+            <!-- API Key Input -->
+            <div class="mb-6">
+                <label for="perplexityApiKey" class="block text-sm font-semibold text-gray-700 mb-1">
+                    Perplexity API Key <span class="text-red-500">*</span>
+                </label>
+                <input type="password" id="perplexityApiKey"
+                    class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all bg-white"
+                    placeholder="sk-...">
+                <p class="text-xs text-gray-500 mt-1">Your key is used locally and never stored.</p>
+            </div>
+
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="bg-white px-3 text-sm font-medium text-gray-500 rounded-full border border-gray-200">Start Your Search</span>
+                </div>
+            </div>
+
+            <!-- Search Options Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Search by Name/Party -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-sky-800 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Search Candidate / Party
+                    </h3>
+                    <div class="space-y-3">
+                        <input type="text" id="searchQuery"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                            placeholder="e.g., Narendra Modi, BJP">
+                        
+                        <select id="language"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white">
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi (हिन्दी)</option>
+                            <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
+                            <option value="Tamil">Tamil (தமிழ்)</option>
+                            <option value="Telugu">Telugu (తెలుగు)</option>
+                        </select>
+                        
+                        <button id="analyzeButton"
+                            class="w-full bg-gradient-to-r from-sky-600 to-sky-700 text-white font-bold py-3 px-6 rounded-lg hover:from-sky-700 hover:to-sky-800 transform transition hover:-translate-y-0.5 shadow-lg active:scale-95">
+                            Analyze Facts
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search by Location -->
+                <div class="space-y-4 md:border-l md:border-gray-200 md:pl-8">
+                    <h3 class="text-lg font-bold text-green-700 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Find Local Reps
+                    </h3>
+                    <div class="space-y-3">
+                        <input type="text" id="locationQuery" 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                            placeholder="e.g., Jayanagar, Bengaluru">
+                        
+                        <button id="findRepsButton"
+                            class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-3 px-6 rounded-lg hover:from-green-700 hover:to-green-800 transform transition hover:-translate-y-0.5 shadow-lg active:scale-95">
+                            Locate MP & MLA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Status Messages -->
+        <div id="loading" class="hidden flex-col justify-center items-center py-10 animate-fade-in">
+            <div class="spinner mb-4"></div>
+            <p class="text-sky-700 font-medium animate-pulse">Consulting verified sources...</p>
+        </div>
+
+        <div id="error" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r shadow-md mb-6" role="alert">
+            <div class="flex">
+                <div class="py-1"><svg class="fill-current h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+                <div>
+                    <p class="font-bold">Something went wrong</p>
+                    <p id="errorMessage" class="text-sm"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rep Selection (Dynamic) -->
+        <section id="rep-selection" class="hidden bg-white p-6 rounded-xl shadow-lg mb-8 border border-green-100">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Representatives Found</h3>
+            <p class="text-sm text-gray-500 mb-6">Select a representative to analyze their detailed profile.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button id="mpButton" class="group relative w-full bg-white border-2 border-sky-100 p-4 rounded-xl hover:border-sky-500 hover:shadow-md transition-all text-left">
+                    <span class="text-xs font-bold text-sky-500 uppercase tracking-wider">Member of Parliament</span>
+                    <div class="text-lg font-bold text-gray-800 mt-1" id="mpNameDisplay">...</div>
+                </button>
+                <button id="mlaButton" class="group relative w-full bg-white border-2 border-green-100 p-4 rounded-xl hover:border-green-500 hover:shadow-md transition-all text-left">
+                    <span class="text-xs font-bold text-green-500 uppercase tracking-wider">MLA</span>
+                    <div class="text-lg font-bold text-gray-800 mt-1" id="mlaNameDisplay">...</div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results" class="hidden bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 bg-gray-50">
+                <button id="tab-summary" class="flex-1 py-4 text-sm font-bold text-sky-600 border-b-2 border-sky-500 bg-white transition-colors">
+                    Fact Sheet
+                </button>
+                <button id="tab-sources" class="flex-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+                    Verified Sources
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6 md:p-8 min-h-[300px]">
+                
+                <!-- Summary View -->
+                <div id="content-summary">
+                    <!-- Dynamic Title -->
+                    <div class="flex justify-between items-start mb-6">
+                        <h2 id="resultTitle" class="text-2xl font-bold text-gray-900">Analysis Result</h2>
+                        <button id="copyBtn" class="text-gray-400 hover:text-sky-600 transition-colors" title="Copy to Clipboard">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Person Specifics -->
+                    <div id="person-card" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-sky-50 p-4 rounded-lg">
+                            <span class="block text-xs font-bold text-sky-600 uppercase">Net Worth</span>
+                            <span class="text-lg font-semibold text-gray-900" id="person-net-worth">-</span>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <span class="block text-xs font-bold text-red-600 uppercase">Criminal Cases</span>
+                            <span class="text-lg font-semibold text-gray-900" id="person-criminal-cases">-</span>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <span class="block text-xs font-bold text-gray-500 uppercase">Current Party</span>
+                            <span class="text-lg font-semibold text-gray-900" id="person-current-party">-</span>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <span class="block text-xs font-bold text-gray-500 uppercase">Previous Party</span>
+                            <span class="text-lg font-semibold text-gray-900" id="person-previous-party">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Party Specifics -->
+                    <div id="party-card" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-sky-50 p-4 rounded-lg">
+                            <span class="block text-xs font-bold text-sky-600 uppercase">Founded</span>
+                            <span class="text-lg font-semibold text-gray-900" id="party-year">-</span>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <span class="block text-xs font-bold text-gray-500 uppercase">Founder</span>
+                            <span class="text-lg font-semibold text-gray-900" id="party-founder">-</span>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
+                            <span class="block text-xs font-bold text-gray-500 uppercase">Current Leadership</span>
+                            <span class="text-lg font-semibold text-gray-900" id="party-head">-</span>
+                        </div>
+                    </div>
+
+                    <!-- General Text Summary -->
+                    <div id="summary-text-content" class="prose prose-sky max-w-none text-gray-700 leading-relaxed"></div>
+                </div>
+
+                <!-- Sources View -->
+                <div id="content-sources" class="hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Verified Public Sources</h3>
+                    <ul id="sourcesOutput" class="space-y-3"></ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating UI Elements -->
+    
+    <!-- Mystery Bottle (Toggle Chat) -->
+    <button id="mysteryBottle" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50 hover:shadow-sky-400/50 outline-none focus:ring-4 focus:ring-sky-300">
+        🧴
+    </button>
+
+    <!-- Chat Box -->
+    <div id="chatBox" class="hidden-chat fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-sky-100 z-40 flex flex-col overflow-hidden max-h-[500px]">
+        <!-- Chat Header -->
+        <div class="bg-sky-50 p-4 border-b border-sky-100 flex justify-between items-center">
+            <h3 class="font-bold text-sky-800 flex items-center gap-2">
+                <span>🤖</span> Jaagruk Assistant
+            </h3>
+            <button id="closeChatBtn" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- Scrollable Messages -->
+        <div id="chatHistory" class="flex-1 overflow-y-auto p-4 space-y-3 bg-white h-64 text-sm">
+            <div class="flex justify-start">
+                <div class="bg-sky-50 text-sky-900 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%]">
+                    Hi! I can read the facts aloud or answer more questions about Indian politics.
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Controls -->
+        <div class="px-4 py-2 bg-gray-50 border-t border-gray-100 flex gap-2">
+            <button id="speakFactsBtn" class="flex-1 bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 text-xs font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                Read Facts
+            </button>
+            <button id="stopSpeakBtn" class="bg-white border border-red-200 text-red-600 hover:bg-red-50 p-2 rounded-lg" title="Stop Speaking">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
+            </button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 bg-white border-t border-gray-100 flex gap-2">
+            <input type="text" id="chatInput" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-sky-500 outline-none" placeholder="Ask a question...">
+            <button id="sendChatBtn" class="bg-sky-600 text-white rounded-lg px-3 hover:bg-sky-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * JaagrukVoter Application - Consolidated Logic
+         */
+        const App = (function() {
+            // Configuration
+            const CONFIG = {
+                backendUrl: "https://jaagrukvoter-backend-2.onrender.com/api/search-history",
+                perplexityUrl: "https://api.perplexity.ai/chat/completions",
+                model: "sonar-pro"
+            };
+
+            // State Management
+            const state = {
+                messages: [{ role: "system", content: "You are JaagrukVoter, a helpful, neutral AI assistant for Indian voters. Keep answers concise." }],
+                currentData: null,
+                isSpeaking: false
+            };
+
+            // DOM Elements Cache
+            const DOM = {
+                inputs: {
+                    apiKey: document.getElementById('perplexityApiKey'),
+                    search: document.getElementById('searchQuery'),
+                    location: document.getElementById('locationQuery'),
+                    language: document.getElementById('language'),
+                    chat: document.getElementById('chatInput')
+                },
+                buttons: {
+                    analyze: document.getElementById('analyzeButton'),
+                    findReps: document.getElementById('findRepsButton'),
+                    bottle: document.getElementById('mysteryBottle'),
+                    closeChat: document.getElementById('closeChatBtn'),
+                    speak: document.getElementById('speakFactsBtn'),
+                    stopSpeak: document.getElementById('stopSpeakBtn'),
+                    sendChat: document.getElementById('sendChatBtn'),
+                    copy: document.getElementById('copyBtn'),
+                    mp: document.getElementById('mpButton'),
+                    mla: document.getElementById('mlaButton')
+                },
+                containers: {
+                    loading: document.getElementById('loading'),
+                    error: document.getElementById('error'),
+                    results: document.getElementById('results'),
+                    repSelection: document.getElementById('rep-selection'),
+                    chatBox: document.getElementById('chatBox'),
+                    chatHistory: document.getElementById('chatHistory'),
+                    summary: document.getElementById('content-summary'),
+                    sources: document.getElementById('content-sources')
+                },
+                outputs: {
+                    errorMsg: document.getElementById('errorMessage'),
+                    summaryText: document.getElementById('summary-text-content'),
+                    sourcesList: document.getElementById('sourcesOutput'),
+                    personCard: document.getElementById('person-card'),
+                    partyCard: document.getElementById('party-card'),
+                    mpDisplay: document.getElementById('mpNameDisplay'),
+                    mlaDisplay: document.getElementById('mlaNameDisplay'),
+                    title: document.getElementById('resultTitle')
+                },
+                tabs: {
+                    summary: document.getElementById('tab-summary'),
+                    sources: document.getElementById('tab-sources')
+                }
+            };
+
+            // --- UTILITIES ---
+
+            const Utils = {
+                // Sanitize HTML to prevent XSS (basic version)
+                escapeHtml: (text) => {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+
+                // Simple Markdown Parser for bold text and line breaks
+                parseMarkdown: (text) => {
+                    if (!text) return '';
+                    // Escape HTML first
+                    let safeText = Utils.escapeHtml(text);
+                    // Bold: **text** -> <b>text</b>
+                    safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<b class="font-bold text-gray-900">$1</b>');
+                    // Line breaks
+                    safeText = safeText.replace(/\n/g, '<br>');
+                    return safeText;
+                },
+
+                cleanCitation: (text) => {
+                    if (!text || text.trim() === "") return "Data not publicly available";
+                    return text.replace(/(\[[0-9WQ,\s]+\])+/g, '').replace(/N\/A/gi, '').trim();
+                },
+
+                showError: (msg) => {
+                    DOM.outputs.errorMsg.textContent = msg;
+                    DOM.containers.error.classList.remove('hidden');
+                    DOM.containers.loading.classList.add('hidden');
+                    DOM.containers.results.classList.add('hidden');
+                },
+
+                resetUI: () => {
+                    DOM.containers.error.classList.add('hidden');
+                    DOM.containers.results.classList.add('hidden');
+                    DOM.containers.loading.classList.remove('hidden');
+                    DOM.containers.loading.classList.add('flex');
+                    DOM.containers.repSelection.classList.add('hidden');
+                },
+
+                // Animation: Money Rain
+                triggerMoneyRain: () => {
+                    for (let i = 0; i < 20; i++) {
+                        const money = document.createElement('div');
+                        money.textContent = '💸';
+                        money.className = 'money-drop';
+                        money.style.left = Math.random() * 100 + 'vw';
+                        money.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                        money.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                        document.body.appendChild(money);
+                        // Cleanup
+                        setTimeout(() => money.remove(), 4000);
+                    }
+                }
+            };
+
+            // --- API MODULE ---
+
+            const API = {
+                getHeaders: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+
+                logSearch: async (query, type, lang) => {
+                    try {
+                        await fetch(CONFIG.backendUrl, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ query: query.trim(), type, language: lang })
+                        });
+                    } catch (e) {
+                        console.warn("Backend logging failed (non-fatal):", e);
+                    }
+                },
+
+                fetchWithRetry: async (url, options, retries = 2) => {
+                    for (let i = 0; i <= retries; i++) {
+                        try {
+                            const res = await fetch(url, options);
+                            if (res.ok) return res;
+                            if (res.status === 401) throw new Error("Invalid API Key");
+                            if (res.status >= 500) throw new Error("Server Error");
+                        } catch (err) {
+                            if (i === retries) throw err;
+                            await new Promise(r => setTimeout(r, 1000 * (i + 1))); // Backoff
+                        }
+                    }
+                },
+
+                analyzeEntity: async (query, lang, apiKey) => {
+                    const systemPrompt = `You are a non-partisan AI for Indian voters. Identify the entity type (person, party, policy) for "${query}".
+                    
+                    CRITICAL: You MUST return a JSON object.
+                    For 'person' entities (Politicians/Candidates):
+                    1. You MUST SEARCH specifically on MyNeta.info, ADR India, and Election Commission (ECI) Affidavits.
+                    2. DO NOT return empty strings for 'netWorth' or 'criminalCases'. You MUST find the latest available data.
+                    3. If 'criminalCases' is 0, explicitly write "0 Cases". 
+                    4. For 'netWorth', provide the value (e.g., "Rs 5 Crore").
+                    5. If absolutely no data exists in public records after searching MyNeta/ADR, write "Data not found in affidavits".
+
+                    JSON Structure:
+                    {
+                      "entityType": "person|party|policy|other",
+                      "personDetails": { 
+                          "name": "Full Name", 
+                          "netWorth": "Value from affidavit (or 'Data not found')", 
+                          "criminalCases": "Number/Details (or '0 Cases')", 
+                          "currentParty": "Party Name", 
+                          "previousParty": "Former Parties (or 'None')" 
+                      },
+                      "partyDetails": { "name": "", "yearEstablished": "", "founder": "", "head": "" },
+                      "generalSummary": "Markdown text summary in ${lang}. Use **bold** for key facts."
+                    }`;
+
+                    const response = await API.fetchWithRetry(CONFIG.perplexityUrl, {
+                        method: 'POST',
+                        headers: API.getHeaders(apiKey),
+                        body: JSON.stringify({
+                            model: CONFIG.model,
+                            messages: [
+                                { role: "system", content: systemPrompt },
+                                { role: "user", content: `Analyze: ${query}` }
+                            ]
+                        })
+                    });
+
+                    const data = await response.json();
+                    return {
+                        content: JSON.parse(data.choices[0].message.content.match(/\{[\s\S]*\}/)[0]),
+                        sources: data.citations || [] // Newer model might return citations differently, keeping fallback
+                    };
+                },
+
+                findReps: async (location, apiKey) => {
+                    const response = await API.fetchWithRetry(CONFIG.perplexityUrl, {
+                        method: 'POST',
+                        headers: API.getHeaders(apiKey),
+                        body: JSON.stringify({
+                            model: CONFIG.model,
+                            messages: [
+                                { role: "system", content: "Return JSON: {\"mp_name\": \"Name\", \"mla_name\": \"Name\"} for the Indian location provided." },
+                                { role: "user", content: `Find MP and MLA for: ${location}` }
+                            ]
+                        })
+                    });
+                    const data = await response.json();
+                    return JSON.parse(data.choices[0].message.content.match(/\{[\s\S]*\}/)[0]);
+                },
+
+                chat: async (history, apiKey) => {
+                    const response = await API.fetchWithRetry(CONFIG.perplexityUrl, {
+                        method: 'POST',
+                        headers: API.getHeaders(apiKey),
+                        body: JSON.stringify({ model: CONFIG.model, messages: history })
+                    });
+                    const data = await response.json();
+                    return data.choices[0].message.content;
+                }
+            };
+
+            // --- UI LOGIC ---
+
+            const UI = {
+                renderResults: (data, sources) => {
+                    state.currentData = data; // Store for reading
+                    DOM.containers.loading.classList.add('hidden');
+                    DOM.containers.results.classList.remove('hidden');
+
+                    // Reset sub-cards
+                    DOM.outputs.personCard.classList.add('hidden');
+                    DOM.outputs.partyCard.classList.add('hidden');
+
+                    // Set Title
+                    DOM.outputs.title.textContent = data.entityType === 'person' 
+                        ? (data.personDetails?.name || 'Candidate Details') 
+                        : (data.partyDetails?.name || 'Analysis Details');
+
+                    // Fill Cards
+                    const fill = (id, txt) => {
+                        const el = document.getElementById(id);
+                        if(el) el.textContent = Utils.cleanCitation(txt || "-");
+                    };
+
+                    if (data.entityType === 'person') {
+                        DOM.outputs.personCard.classList.remove('hidden');
+                        const p = data.personDetails || {};
+                        fill('person-net-worth', p.netWorth);
+                        fill('person-criminal-cases', p.criminalCases);
+                        fill('person-current-party', p.currentParty);
+                        fill('person-previous-party', p.previousParty);
+                    } else if (data.entityType === 'party') {
+                        DOM.outputs.partyCard.classList.remove('hidden');
+                        const p = data.partyDetails || {};
+                        fill('party-year', p.yearEstablished);
+                        fill('party-founder', p.founder);
+                        fill('party-head', p.head);
+                    }
+
+                    // Render Summary
+                    DOM.outputs.summaryText.innerHTML = Utils.parseMarkdown(data.generalSummary);
+
+                    // Render Sources
+                    DOM.outputs.sourcesList.innerHTML = '';
+                    if (sources && sources.length) {
+                        sources.forEach((url, index) => {
+                            const li = document.createElement('li');
+                            li.className = "text-sm truncate";
+                            li.innerHTML = `<span class="font-bold text-sky-600">[${index+1}]</span> <a href="${url}" target="_blank" class="text-gray-600 hover:text-sky-600 hover:underline transition">${url}</a>`;
+                            DOM.outputs.sourcesList.appendChild(li);
+                        });
+                    } else {
+                        DOM.outputs.sourcesList.innerHTML = '<li class="text-gray-500 italic">No specific web sources cited.</li>';
+                    }
+
+                    Utils.triggerMoneyRain();
+                    UI.switchTab('summary');
+                },
+
+                switchTab: (tabName) => {
+                    const isSum = tabName === 'summary';
+                    DOM.tabs.summary.className = isSum ? "flex-1 py-4 text-sm font-bold text-sky-600 border-b-2 border-sky-500 bg-white" : "flex-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700";
+                    DOM.tabs.sources.className = !isSum ? "flex-1 py-4 text-sm font-bold text-sky-600 border-b-2 border-sky-500 bg-white" : "flex-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700";
+                    
+                    DOM.containers.summary.classList.toggle('hidden', !isSum);
+                    DOM.containers.sources.classList.toggle('hidden', isSum);
+                },
+
+                addChatMessage: (sender, text) => {
+                    const div = document.createElement('div');
+                    div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                    
+                    const bubble = document.createElement('div');
+                    bubble.className = sender === 'user' 
+                        ? 'bg-sky-600 text-white rounded-2xl rounded-tr-none py-2 px-3 max-w-[85%]' 
+                        : 'bg-sky-50 text-sky-900 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%]';
+                    
+                    bubble.innerHTML = Utils.parseMarkdown(text);
+                    div.appendChild(bubble);
+                    DOM.containers.chatHistory.appendChild(div);
+                    DOM.containers.chatHistory.scrollTop = DOM.containers.chatHistory.scrollHeight;
+                }
+            };
+
+            // --- EVENT HANDLERS ---
+
+            const Handlers = {
+                validate: () => {
+                    const key = DOM.inputs.apiKey.value.trim();
+                    if (!key) {
+                        alert("Please enter your Perplexity API Key.");
+                        DOM.inputs.apiKey.focus();
+                        return null;
+                    }
+                    return key;
+                },
+
+                handleAnalyze: async () => {
+                    const apiKey = Handlers.validate();
+                    const query = DOM.inputs.search.value.trim();
+                    if (!apiKey || !query) return;
+
+                    Utils.resetUI();
+                    API.logSearch(query, "entity", DOM.inputs.language.value);
+
+                    try {
+                        const { content, sources } = await API.analyzeEntity(query, DOM.inputs.language.value, apiKey);
+                        UI.renderResults(content, sources);
+                    } catch (e) {
+                        Utils.showError(e.message || "Failed to analyze.");
+                    }
+                },
+
+                handleLocation: async () => {
+                    const apiKey = Handlers.validate();
+                    const loc = DOM.inputs.location.value.trim();
+                    if (!apiKey || !loc) return;
+
+                    Utils.resetUI();
+                    API.logSearch(loc, "location", "English");
+
+                    try {
+                        const data = await API.findReps(loc, apiKey);
+                        DOM.containers.loading.classList.add('hidden');
+                        DOM.containers.repSelection.classList.remove('hidden');
+                        
+                        const setBtn = (btn, display, name) => {
+                            display.textContent = name && name !== 'N/A' ? name : 'Not Found';
+                            btn.disabled = !name || name === 'N/A';
+                            btn.dataset.name = name || "";
+                            btn.classList.toggle('opacity-50', btn.disabled);
+                            btn.onclick = () => {
+                                DOM.inputs.search.value = name;
+                                DOM.containers.repSelection.classList.add('hidden');
+                                Handlers.handleAnalyze();
+                            };
+                        };
+
+                        setBtn(DOM.buttons.mp, DOM.outputs.mpDisplay, data.mp_name);
+                        setBtn(DOM.buttons.mla, DOM.outputs.mlaDisplay, data.mla_name);
+
+                    } catch (e) {
+                        Utils.showError(e.message || "Could not find representatives.");
+                    }
+                },
+
+                handleChat: async () => {
+                    const apiKey = Handlers.validate();
+                    const txt = DOM.inputs.chat.value.trim();
+                    if (!apiKey || !txt) return;
+
+                    UI.addChatMessage('user', txt);
+                    DOM.inputs.chat.value = '';
+                    state.messages.push({ role: "user", content: txt });
+
+                    // Loading indicator
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.id = 'chat-loading';
+                    loadingDiv.className = 'flex justify-start';
+                    loadingDiv.innerHTML = '<div class="bg-gray-100 rounded-2xl py-2 px-4 animate-pulse">...</div>';
+                    DOM.containers.chatHistory.appendChild(loadingDiv);
+
+                    try {
+                        const reply = await API.chat(state.messages, apiKey);
+                        state.messages.push({ role: "assistant", content: reply });
+                        document.getElementById('chat-loading').remove();
+                        UI.addChatMessage('assistant', reply);
+                    } catch (e) {
+                        document.getElementById('chat-loading').remove();
+                        UI.addChatMessage('assistant', "Sorry, error connecting to AI.");
+                    }
+                },
+
+                handleSpeak: () => {
+                    if (state.isSpeaking) {
+                        window.speechSynthesis.cancel();
+                        state.isSpeaking = false;
+                        return;
+                    }
+
+                    const text = DOM.outputs.summaryText.innerText;
+                    if (!text) return alert("Nothing to read yet.");
+
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.onend = () => state.isSpeaking = false;
+                    window.speechSynthesis.speak(utterance);
+                    state.isSpeaking = true;
+                }
+            };
+
+            // --- INITIALIZATION ---
+            
+            const init = () => {
+                // Main Buttons
+                DOM.buttons.analyze.addEventListener('click', Handlers.handleAnalyze);
+                DOM.buttons.findReps.addEventListener('click', Handlers.handleLocation);
+
+                // Tab Switching
+                DOM.tabs.summary.addEventListener('click', () => UI.switchTab('summary'));
+                DOM.tabs.sources.addEventListener('click', () => UI.switchTab('sources'));
+
+                // Chat & Bottle Toggle
+                DOM.buttons.bottle.addEventListener('click', () => DOM.containers.chatBox.classList.remove('hidden-chat'));
+                DOM.buttons.closeChat.addEventListener('click', () => DOM.containers.chatBox.classList.add('hidden-chat'));
+                
+                // Chat Logic
+                DOM.buttons.sendChat.addEventListener('click', Handlers.handleChat);
+                DOM.inputs.chat.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') Handlers.handleChat();
+                });
+
+                // Speech
+                DOM.buttons.speak.addEventListener('click', Handlers.handleSpeak);
+                DOM.buttons.stopSpeak.addEventListener('click', () => {
+                    window.speechSynthesis.cancel();
+                    state.isSpeaking = false;
+                });
+
+                // Copy
+                DOM.buttons.copy.addEventListener('click', () => {
+                    navigator.clipboard.writeText(DOM.outputs.summaryText.innerText);
+                    alert("Summary copied to clipboard!");
+                });
+            };
+
+            return { init };
+        })();
+
+        // Start App
+        document.addEventListener('DOMContentLoaded', App.init);
+
+    </script>
+</body>
+</html>
