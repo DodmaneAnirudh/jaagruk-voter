@@ -10,65 +10,66 @@
         if (!isLoggedIn) {
             window.location.href = "login.html";
         }
-        // Logout Logic
-document.getElementById('mainLogoutBtn').addEventListener('click', () => {
-    // 1. Clear the login flag
-    localStorage.removeItem("user_logged_in");
-    // 2. Redirect to login page
-    window.location.href = "login.html";
-});
+        
+        // Logout Logic (Event listener added in body script)
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JaagrukVoter - Clear Ballot India</title>
+    <title>JaagrukVoter - Sovereign India Dashboard</title>
     
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Load Inter font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Indian-style Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #0284c7, #0ea5e9);
-            --bg-gradient: linear-gradient(270deg, #e0f2fe, #f0f9ff, #bae6fd);
+            --saffron: #FF9933;
+            --white: #FFFFFF;
+            --green: #138808;
+            --navy: #000080;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
-            background-size: 600% 600%;
-            animation: animatedBackground 16s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            /* Background with Overlay similar to Login */
+            background-image: linear-gradient(rgba(255, 153, 51, 0.9), rgba(255, 255, 255, 0.85), rgba(19, 136, 8, 0.85)), 
+                              url('https://images.unsplash.com/photo-1597058712635-3182d1e83116?q=80&w=2500&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
-
-        @keyframes animatedBackground {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        
+        h1, h2, h3, .font-serif { font-family: 'Merriweather', serif; }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.5); }
+        ::-webkit-scrollbar-thumb { background: var(--navy); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #000060; }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        /* Ashoka Chakra Animation */
+        .chakra-spin {
+            animation: spin-slow 20s linear infinite;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #bfdbfe;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #93c5fd;
-        }
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
 
         /* Spinner Animation */
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
+            border: 4px solid rgba(0, 0, 80, 0.1);
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            border-left-color: #0ea5e9;
+            border-left-color: var(--saffron);
             animation: spin 1s linear infinite;
         }
 
@@ -105,6 +106,7 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
             z-index: 9999;
             pointer-events: none;
             animation: fall linear forwards;
+            font-family: serif; /* For Rupee symbol */
         }
 
         @keyframes fall {
@@ -116,63 +118,86 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
     </style>
 </head>
 
-<body class="text-gray-900 min-h-screen">
+<body class="text-gray-900 min-h-screen overflow-x-hidden">
+    
+    <!-- Decorative Chakra Watermark -->
+    <div class="fixed -left-24 top-1/4 opacity-5 pointer-events-none z-0">
+        <svg class="chakra-spin w-96 h-96 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v4h-2zm0 6h2v4h-2z"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1" fill="none"/>
+            <path d="M12 4V2M12 22v-2M4 12H2m20 0h-2m-2.17-7.83l-1.42-1.42M5.59 18.41l-1.42 1.42M18.41 5.59l1.42-1.42M5.59 5.59L4.17 4.17M19.83 19.83l-1.42-1.42M4.17 19.83l1.42-1.42M19.83 4.17l-1.42 1.42"/>
+        </svg>
+    </div>
+
     <!-- Logout Button -->
-<button id="mainLogoutBtn" class="fixed top-4 right-4 z-50 bg-white border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg shadow-sm text-sm font-bold transition-all flex items-center gap-2">
-    <span>Logout</span>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-    </svg>
-</button>
+    <button id="mainLogoutBtn" class="fixed top-4 right-4 z-50 bg-white border border-red-200 text-red-700 hover:bg-red-50 px-4 py-2 rounded-lg shadow-md text-sm font-bold transition-all flex items-center gap-2 hover:shadow-lg">
+        <span>Logout</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+    </button>
     
     <!-- Main container -->
-    <main class="container mx-auto max-w-4xl p-4 pt-8 md:pt-12">
+    <main class="container mx-auto max-w-5xl p-4 pt-8 md:pt-16 relative z-10">
 
         <!-- Header -->
         <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-sky-800 tracking-tight">JaagrukVoter</h1>
-            <p class="text-lg text-gray-700 mt-2 font-medium">Clear, unbiased facts on Indian candidates & policies.</p>
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-900 text-white rounded-full mb-4 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v1H4v-1zm0 0V7m16 3V7" />
+                </svg>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-blue-900 tracking-tight drop-shadow-sm">Jaagruk<span class="text-orange-600">Voter</span></h1>
+            <p class="text-lg text-gray-800 mt-3 font-medium">Clear, unbiased facts on Indian candidates & policies.</p>
+            <div class="w-24 h-1.5 bg-gradient-to-r from-orange-500 via-white to-green-600 mx-auto mt-6 rounded-full border border-gray-300"></div>
         </header>
 
         <!-- Configuration & Input Section -->
-        <section class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/50 mb-8">
+        <section class="glass-panel rounded-2xl p-6 md:p-8 mb-8 border-t-4 border-t-orange-500">
             
             <!-- API Key Input -->
-            <div class="mb-6">
-                <label for="perplexityApiKey" class="block text-sm font-semibold text-gray-700 mb-1">
+            <div class="mb-8">
+                <label for="perplexityApiKey" class="block text-sm font-bold text-gray-700 mb-2">
                     Perplexity API Key <span class="text-red-500">*</span>
                 </label>
-                <input type="password" id="perplexityApiKey"
-                    class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all bg-white"
-                    placeholder="sk-...">
-                <p class="text-xs text-gray-500 mt-1">Your key is used locally and never stored.</p>
+                <div class="relative">
+                    <input type="password" id="perplexityApiKey"
+                        class="w-full p-4 pl-5 border border-gray-300 rounded-xl shadow-inner focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50"
+                        placeholder="sk-...">
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 ml-1">Your key is used locally and never stored.</p>
             </div>
 
-            <div class="relative my-8">
+            <div class="relative my-10">
                 <div class="absolute inset-0 flex items-center" aria-hidden="true">
                     <div class="w-full border-t border-gray-300"></div>
                 </div>
                 <div class="relative flex justify-center">
-                    <span class="bg-white px-3 text-sm font-medium text-gray-500 rounded-full border border-gray-200">Start Your Search</span>
+                    <span class="bg-white px-4 py-1 text-sm font-bold text-blue-900 rounded-full border border-gray-200 shadow-sm uppercase tracking-wider">Start Your Search</span>
                 </div>
             </div>
 
             <!-- Search Options Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 
-                <!-- Search by Name/Party -->
+                <!-- Search by Name/Party (Saffron Theme) -->
                 <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-sky-800 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <h3 class="text-xl font-bold text-orange-700 flex items-center border-b border-orange-100 pb-2">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         Search Candidate / Party
                     </h3>
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <input type="text" id="searchQuery"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                            class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white shadow-sm"
                             placeholder="e.g., Narendra Modi, BJP">
                         
                         <select id="language"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white">
+                            class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white shadow-sm cursor-pointer">
                             <option value="English">English</option>
                             <option value="Hindi">Hindi (हिन्दी)</option>
                             <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
@@ -181,26 +206,35 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
                         </select>
                         
                         <button id="analyzeButton"
-                            class="w-full bg-gradient-to-r from-sky-600 to-sky-700 text-white font-bold py-3 px-6 rounded-lg hover:from-sky-700 hover:to-sky-800 transform transition hover:-translate-y-0.5 shadow-lg active:scale-95">
-                            Analyze Facts
+                            class="w-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold py-4 px-6 rounded-xl hover:from-orange-700 hover:to-orange-600 transform transition hover:-translate-y-0.5 shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                            <span>Analyze Facts</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                     </div>
                 </div>
 
-                <!-- Search by Location -->
-                <div class="space-y-4 md:border-l md:border-gray-200 md:pl-8">
-                    <h3 class="text-lg font-bold text-green-700 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <!-- Search by Location (Green Theme) -->
+                <div class="space-y-4 md:border-l md:border-gray-200 md:pl-10">
+                    <h3 class="text-xl font-bold text-green-700 flex items-center border-b border-green-100 pb-2">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         Find Local Reps
                     </h3>
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <input type="text" id="locationQuery" 
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                            class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white shadow-sm" 
                             placeholder="e.g., Jayanagar, Bengaluru">
                         
+                        <!-- Spacer to align buttons if needed, or just margin -->
+                        <div class="h-[1px] md:h-[1px]"></div>
+
                         <button id="findRepsButton"
-                            class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-3 px-6 rounded-lg hover:from-green-700 hover:to-green-800 transform transition hover:-translate-y-0.5 shadow-lg active:scale-95">
-                            Locate MP & MLA
+                            class="w-full bg-gradient-to-r from-green-600 to-green-500 text-white font-bold py-4 px-6 rounded-xl hover:from-green-700 hover:to-green-600 transform transition hover:-translate-y-0.5 shadow-lg active:scale-95 flex items-center justify-center gap-2 mt-auto">
+                            <span>Locate MP & MLA</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -208,106 +242,106 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
         </section>
 
         <!-- Status Messages -->
-        <div id="loading" class="hidden flex-col justify-center items-center py-10 animate-fade-in">
+        <div id="loading" class="hidden flex-col justify-center items-center py-10 animate-fade-in bg-white/80 backdrop-blur rounded-xl shadow-sm border border-orange-100">
             <div class="spinner mb-4"></div>
-            <p class="text-sky-700 font-medium animate-pulse">Consulting verified sources...</p>
+            <p class="text-blue-900 font-bold animate-pulse">Consulting verified sources...</p>
         </div>
 
-        <div id="error" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r shadow-md mb-6" role="alert">
+        <div id="error" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-6 rounded-r shadow-md mb-6" role="alert">
             <div class="flex">
                 <div class="py-1"><svg class="fill-current h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
                 <div>
-                    <p class="font-bold">Something went wrong</p>
+                    <p class="font-bold font-serif text-lg">Something went wrong</p>
                     <p id="errorMessage" class="text-sm"></p>
                 </div>
             </div>
         </div>
 
         <!-- Rep Selection (Dynamic) -->
-        <section id="rep-selection" class="hidden bg-white p-6 rounded-xl shadow-lg mb-8 border border-green-100">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Representatives Found</h3>
-            <p class="text-sm text-gray-500 mb-6">Select a representative to analyze their detailed profile.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button id="mpButton" class="group relative w-full bg-white border-2 border-sky-100 p-4 rounded-xl hover:border-sky-500 hover:shadow-md transition-all text-left">
-                    <span class="text-xs font-bold text-sky-500 uppercase tracking-wider">Member of Parliament</span>
-                    <div class="text-lg font-bold text-gray-800 mt-1" id="mpNameDisplay">...</div>
+        <section id="rep-selection" class="hidden glass-panel p-6 rounded-xl shadow-lg mb-8 border-t-4 border-green-600">
+            <h3 class="text-2xl font-bold text-blue-900 mb-2 font-serif">Representatives Found</h3>
+            <p class="text-sm text-gray-600 mb-6">Select a representative to analyze their detailed profile.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <button id="mpButton" class="group relative w-full bg-white border-2 border-orange-100 p-6 rounded-xl hover:border-orange-500 hover:shadow-lg hover:shadow-orange-100 transition-all text-left">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-wider border border-orange-200 px-2 py-1 rounded-md bg-orange-50">Member of Parliament</span>
+                    <div class="text-xl font-bold text-gray-900 mt-3 group-hover:text-orange-700 transition-colors" id="mpNameDisplay">...</div>
                 </button>
-                <button id="mlaButton" class="group relative w-full bg-white border-2 border-green-100 p-4 rounded-xl hover:border-green-500 hover:shadow-md transition-all text-left">
-                    <span class="text-xs font-bold text-green-500 uppercase tracking-wider">MLA</span>
-                    <div class="text-lg font-bold text-gray-800 mt-1" id="mlaNameDisplay">...</div>
+                <button id="mlaButton" class="group relative w-full bg-white border-2 border-green-100 p-6 rounded-xl hover:border-green-500 hover:shadow-lg hover:shadow-green-100 transition-all text-left">
+                    <span class="text-xs font-bold text-green-600 uppercase tracking-wider border border-green-200 px-2 py-1 rounded-md bg-green-50">MLA</span>
+                    <div class="text-xl font-bold text-gray-900 mt-3 group-hover:text-green-700 transition-colors" id="mlaNameDisplay">...</div>
                 </button>
             </div>
         </section>
 
         <!-- Results Section -->
-        <section id="results" class="hidden bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
+        <section id="results" class="hidden glass-panel rounded-xl shadow-2xl overflow-hidden border-t-4 border-blue-900">
             <!-- Tabs -->
-            <div class="flex border-b border-gray-200 bg-gray-50">
-                <button id="tab-summary" class="flex-1 py-4 text-sm font-bold text-sky-600 border-b-2 border-sky-500 bg-white transition-colors">
+            <div class="flex border-b border-gray-200 bg-gray-50/50">
+                <button id="tab-summary" class="flex-1 py-4 text-sm font-bold text-blue-900 border-b-4 border-blue-900 bg-white transition-colors uppercase tracking-wide">
                     Fact Sheet
                 </button>
-                <button id="tab-sources" class="flex-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+                <button id="tab-sources" class="flex-1 py-4 text-sm font-medium text-gray-500 hover:text-blue-900 transition-colors uppercase tracking-wide">
                     Verified Sources
                 </button>
             </div>
 
             <!-- Content Area -->
-            <div class="p-6 md:p-8 min-h-[300px]">
+            <div class="p-6 md:p-10 min-h-[300px] bg-white">
                 
                 <!-- Summary View -->
                 <div id="content-summary">
                     <!-- Dynamic Title -->
-                    <div class="flex justify-between items-start mb-6">
-                        <h2 id="resultTitle" class="text-2xl font-bold text-gray-900">Analysis Result</h2>
-                        <button id="copyBtn" class="text-gray-400 hover:text-sky-600 transition-colors" title="Copy to Clipboard">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <div class="flex justify-between items-start mb-8 pb-4 border-b border-gray-100">
+                        <h2 id="resultTitle" class="text-3xl font-bold text-blue-900 font-serif">Analysis Result</h2>
+                        <button id="copyBtn" class="text-gray-400 hover:text-orange-600 transition-colors p-2 hover:bg-orange-50 rounded-full" title="Copy to Clipboard">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                         </button>
                     </div>
 
                     <!-- Person Specifics -->
-                    <div id="person-card" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-sky-50 p-4 rounded-lg">
-                            <span class="block text-xs font-bold text-sky-600 uppercase">Net Worth</span>
-                            <span class="text-lg font-semibold text-gray-900" id="person-net-worth">-</span>
+                    <div id="person-card" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-orange-50 p-5 rounded-xl border border-orange-100">
+                            <span class="block text-xs font-bold text-orange-700 uppercase tracking-wide mb-1">Net Worth</span>
+                            <span class="text-2xl font-serif font-bold text-gray-900" id="person-net-worth">-</span>
                         </div>
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <span class="block text-xs font-bold text-red-600 uppercase">Criminal Cases</span>
-                            <span class="text-lg font-semibold text-gray-900" id="person-criminal-cases">-</span>
+                        <div class="bg-red-50 p-5 rounded-xl border border-red-100">
+                            <span class="block text-xs font-bold text-red-700 uppercase tracking-wide mb-1">Criminal Cases</span>
+                            <span class="text-2xl font-serif font-bold text-gray-900" id="person-criminal-cases">-</span>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <span class="block text-xs font-bold text-gray-500 uppercase">Current Party</span>
-                            <span class="text-lg font-semibold text-gray-900" id="person-current-party">-</span>
+                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                            <span class="block text-xs font-bold text-blue-700 uppercase tracking-wide mb-1">Current Party</span>
+                            <span class="text-lg font-bold text-gray-900" id="person-current-party">-</span>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <span class="block text-xs font-bold text-gray-500 uppercase">Previous Party</span>
-                            <span class="text-lg font-semibold text-gray-900" id="person-previous-party">-</span>
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <span class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Previous Party</span>
+                            <span class="text-lg font-medium text-gray-900" id="person-previous-party">-</span>
                         </div>
                     </div>
 
                     <!-- Party Specifics -->
-                    <div id="party-card" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-sky-50 p-4 rounded-lg">
-                            <span class="block text-xs font-bold text-sky-600 uppercase">Founded</span>
-                            <span class="text-lg font-semibold text-gray-900" id="party-year">-</span>
+                    <div id="party-card" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-orange-50 p-5 rounded-xl border border-orange-100">
+                            <span class="block text-xs font-bold text-orange-700 uppercase mb-1">Founded</span>
+                            <span class="text-xl font-bold text-gray-900" id="party-year">-</span>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <span class="block text-xs font-bold text-gray-500 uppercase">Founder</span>
-                            <span class="text-lg font-semibold text-gray-900" id="party-founder">-</span>
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <span class="block text-xs font-bold text-green-700 uppercase mb-1">Founder</span>
+                            <span class="text-xl font-bold text-gray-900" id="party-founder">-</span>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
-                            <span class="block text-xs font-bold text-gray-500 uppercase">Current Leadership</span>
-                            <span class="text-lg font-semibold text-gray-900" id="party-head">-</span>
+                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 md:col-span-2">
+                            <span class="block text-xs font-bold text-blue-700 uppercase mb-1">Current Leadership</span>
+                            <span class="text-xl font-bold text-gray-900" id="party-head">-</span>
                         </div>
                     </div>
 
                     <!-- General Text Summary -->
-                    <div id="summary-text-content" class="prose prose-sky max-w-none text-gray-700 leading-relaxed"></div>
+                    <div id="summary-text-content" class="prose prose-lg prose-blue max-w-none text-gray-700 leading-relaxed font-sans"></div>
                 </div>
 
                 <!-- Sources View -->
                 <div id="content-sources" class="hidden">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Verified Public Sources</h3>
-                    <ul id="sourcesOutput" class="space-y-3"></ul>
+                    <h3 class="text-xl font-bold text-blue-900 mb-6 font-serif border-b pb-2">Verified Public Sources</h3>
+                    <ul id="sourcesOutput" class="space-y-4"></ul>
                 </div>
             </div>
         </section>
@@ -316,35 +350,35 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
 
     <!-- Floating UI Elements -->
     
-    <!-- Mystery Bottle (Toggle Chat) -->
-    <button id="mysteryBottle" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50 hover:shadow-sky-400/50 outline-none focus:ring-4 focus:ring-sky-300">
-        🧴
+    <!-- Mystery Bottle (Sovereign Chat) -->
+    <button id="mysteryBottle" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-900 to-blue-800 text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:shadow-blue-500/50 outline-none focus:ring-4 focus:ring-blue-300 border-2 border-orange-400">
+        <span class="text-2xl">🗳️</span>
     </button>
 
     <!-- Chat Box -->
-    <div id="chatBox" class="hidden-chat fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-sky-100 z-40 flex flex-col overflow-hidden max-h-[500px]">
+    <div id="chatBox" class="hidden-chat fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border-2 border-blue-900 z-40 flex flex-col overflow-hidden max-h-[500px]">
         <!-- Chat Header -->
-        <div class="bg-sky-50 p-4 border-b border-sky-100 flex justify-between items-center">
-            <h3 class="font-bold text-sky-800 flex items-center gap-2">
-                <span>🤖</span> Jaagruk Assistant
+        <div class="bg-blue-900 p-4 border-b border-blue-800 flex justify-between items-center">
+            <h3 class="font-bold text-white flex items-center gap-2 font-serif">
+                <span>🇮🇳</span> Jaagruk Assistant
             </h3>
-            <button id="closeChatBtn" class="text-gray-400 hover:text-gray-600">
+            <button id="closeChatBtn" class="text-blue-200 hover:text-white transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
 
         <!-- Scrollable Messages -->
-        <div id="chatHistory" class="flex-1 overflow-y-auto p-4 space-y-3 bg-white h-64 text-sm">
+        <div id="chatHistory" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 h-64 text-sm">
             <div class="flex justify-start">
-                <div class="bg-sky-50 text-sky-900 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%]">
+                <div class="bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-tl-none py-3 px-4 max-w-[85%] shadow-sm">
                     Hi! I can read the facts aloud or answer more questions about Indian politics.
                 </div>
             </div>
         </div>
 
         <!-- Audio Controls -->
-        <div class="px-4 py-2 bg-gray-50 border-t border-gray-100 flex gap-2">
-            <button id="speakFactsBtn" class="flex-1 bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 text-xs font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+        <div class="px-4 py-2 bg-gray-50 border-t border-gray-200 flex gap-2">
+            <button id="speakFactsBtn" class="flex-1 bg-white border border-blue-200 text-blue-900 hover:bg-blue-50 text-xs font-bold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
                 Read Facts
             </button>
@@ -354,9 +388,9 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
         </div>
 
         <!-- Input Area -->
-        <div class="p-3 bg-white border-t border-gray-100 flex gap-2">
-            <input type="text" id="chatInput" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-sky-500 outline-none" placeholder="Ask a question...">
-            <button id="sendChatBtn" class="bg-sky-600 text-white rounded-lg px-3 hover:bg-sky-700 transition-colors">
+        <div class="p-3 bg-white border-t border-gray-200 flex gap-2">
+            <input type="text" id="chatInput" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50" placeholder="Ask a question...">
+            <button id="sendChatBtn" class="bg-orange-600 text-white rounded-lg px-3 hover:bg-orange-700 transition-colors shadow-md">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
             </button>
         </div>
@@ -445,7 +479,7 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
                     // Escape HTML first
                     let safeText = Utils.escapeHtml(text);
                     // Bold: **text** -> <b>text</b>
-                    safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<b class="font-bold text-gray-900">$1</b>');
+                    safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<b class="font-bold text-blue-900">$1</b>');
                     // Line breaks
                     safeText = safeText.replace(/\n/g, '<br>');
                     return safeText;
@@ -475,8 +509,8 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
                 triggerMoneyRain: () => {
                     for (let i = 0; i < 20; i++) {
                         const money = document.createElement('div');
-                        money.textContent = '💸';
-                        money.className = 'money-drop';
+                        money.textContent = '₹'; // Changed to Rupee for Indian context
+                        money.className = 'money-drop font-bold text-green-600';
                         money.style.left = Math.random() * 100 + 'vw';
                         money.style.fontSize = (Math.random() * 20 + 20) + 'px';
                         money.style.animationDuration = (Math.random() * 2 + 2) + 's';
@@ -638,8 +672,8 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
                     if (sources && sources.length) {
                         sources.forEach((url, index) => {
                             const li = document.createElement('li');
-                            li.className = "text-sm truncate";
-                            li.innerHTML = `<span class="font-bold text-sky-600">[${index+1}]</span> <a href="${url}" target="_blank" class="text-gray-600 hover:text-sky-600 hover:underline transition">${url}</a>`;
+                            li.className = "text-sm truncate flex items-center gap-2 bg-gray-50 p-2 rounded border border-gray-100";
+                            li.innerHTML = `<span class="font-bold text-orange-600 min-w-[24px]">[${index+1}]</span> <a href="${url}" target="_blank" class="text-blue-700 hover:text-orange-600 hover:underline transition font-medium">${url}</a>`;
                             DOM.outputs.sourcesList.appendChild(li);
                         });
                     } else {
@@ -652,8 +686,14 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
 
                 switchTab: (tabName) => {
                     const isSum = tabName === 'summary';
-                    DOM.tabs.summary.className = isSum ? "flex-1 py-4 text-sm font-bold text-sky-600 border-b-2 border-sky-500 bg-white" : "flex-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700";
-                    DOM.tabs.sources.className = !isSum ? "flex-1 py-4 text-sm font-bold text-sky-600 border-b-2 border-sky-500 bg-white" : "flex-1 py-4 text-sm font-medium text-gray-500 hover:text-gray-700";
+                    // Updated classes for tabs to match theme
+                    DOM.tabs.summary.className = isSum 
+                        ? "flex-1 py-4 text-sm font-bold text-blue-900 border-b-4 border-blue-900 bg-white uppercase tracking-wide" 
+                        : "flex-1 py-4 text-sm font-medium text-gray-500 hover:text-blue-900 uppercase tracking-wide";
+                    
+                    DOM.tabs.sources.className = !isSum 
+                        ? "flex-1 py-4 text-sm font-bold text-blue-900 border-b-4 border-blue-900 bg-white uppercase tracking-wide" 
+                        : "flex-1 py-4 text-sm font-medium text-gray-500 hover:text-blue-900 uppercase tracking-wide";
                     
                     DOM.containers.summary.classList.toggle('hidden', !isSum);
                     DOM.containers.sources.classList.toggle('hidden', isSum);
@@ -665,8 +705,8 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
                     
                     const bubble = document.createElement('div');
                     bubble.className = sender === 'user' 
-                        ? 'bg-sky-600 text-white rounded-2xl rounded-tr-none py-2 px-3 max-w-[85%]' 
-                        : 'bg-sky-50 text-sky-900 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%]';
+                        ? 'bg-orange-600 text-white rounded-2xl rounded-tr-none py-3 px-4 max-w-[85%] shadow-md' 
+                        : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-tl-none py-3 px-4 max-w-[85%] shadow-sm';
                     
                     bubble.innerHTML = Utils.parseMarkdown(text);
                     div.appendChild(bubble);
