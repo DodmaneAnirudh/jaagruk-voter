@@ -2,6 +2,15 @@
 <html lang="en">
 
 <head>
+    <script>
+        // 🔒 Gatekeeper: Check if user is logged in
+        const isLoggedIn = localStorage.getItem("user_logged_in");
+        
+        // If NOT logged in, kick them to login.html
+        if (!isLoggedIn) {
+            window.location.href = "login.html";
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JaagrukVoter - Clear Ballot India</title>
