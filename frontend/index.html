@@ -823,5 +823,21 @@ document.getElementById('mainLogoutBtn').addEventListener('click', () => {
         document.addEventListener('DOMContentLoaded', App.init);
 
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutBtn = document.getElementById('mainLogoutBtn');
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    // 1. Clear the login flag
+                    localStorage.removeItem("user_logged_in");
+                    // 2. Redirect to login page
+                    window.location.href = "login.html";
+                });
+            } else {
+                console.error("Logout button not found in the HTML!");
+            }
+        });
+    </script>
 </body>
 </html>
