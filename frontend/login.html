@@ -3,74 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JaagrukVoter - Login</title>
+  <title>JaagrukVoter - Sovereign Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Indian-style Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
   <style>
-      body { font-family: 'Inter', sans-serif; }
-      /* Loader for button states */
+      body { font-family: 'Poppins', sans-serif; }
+      h1, h2, h3 { font-family: 'Merriweather', serif; }
+      
+      /* Background with Overlay */
+      .bg-sovereign {
+          background-image: linear-gradient(rgba(255, 153, 51, 0.85), rgba(255, 255, 255, 0.8), rgba(19, 136, 8, 0.8)), 
+                            url('https://images.unsplash.com/photo-1597058712635-3182d1e83116?q=80&w=2500&auto=format&fit=crop'); 
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
+      }
+
+      /* Chakra Animation */
+      .chakra-spin {
+          animation: spin-slow 10s linear infinite;
+      }
+      @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+
+      /* Button Loader */
       .loader {
-          border: 2px solid #f3f3f3;
-          border-top: 2px solid #3498db;
+          border: 3px solid rgba(255,255,255,0.3);
+          border-top: 3px solid #ffffff;
           border-radius: 50%;
-          width: 16px;
-          height: 16px;
+          width: 20px;
+          height: 20px;
           animation: spin 1s linear infinite;
           display: inline-block;
       }
       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      
+      /* Glassmorphism Card */
+      .glass-card {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border-top: 4px solid #FF9933; /* Saffron Top */
+          border-bottom: 4px solid #138808; /* Green Bottom */
+      }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-sky-50 px-4">
-  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md transition-all hover:shadow-2xl">
-    <div class="text-center mb-8">
-        <h1 class="text-3xl font-extrabold text-sky-700 tracking-tight">JaagrukVoter</h1>
-        <p class="text-gray-500 mt-2">Sign in to access personalized election data</p>
+<body class="min-h-screen flex items-center justify-center bg-sovereign px-4 py-12">
+  
+  <!-- Main Container -->
+  <div class="glass-card shadow-2xl rounded-xl p-8 w-full max-w-md relative overflow-hidden transition-all hover:shadow-orange-500/20">
+    
+    <!-- Decorative Ashoka Chakra (Background watermark) -->
+    <div class="absolute -right-12 -top-12 opacity-10 pointer-events-none">
+        <svg class="chakra-spin w-48 h-48 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v4h-2zm0 6h2v4h-2z"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1" fill="none"/>
+            <path d="M12 4V2M12 22v-2M4 12H2m20 0h-2m-2.17-7.83l-1.42-1.42M5.59 18.41l-1.42 1.42M18.41 5.59l1.42-1.42M5.59 5.59L4.17 4.17M19.83 19.83l-1.42-1.42M4.17 19.83l1.42-1.42M19.83 4.17l-1.42 1.42"/>
+        </svg>
+    </div>
+
+    <div class="text-center mb-8 relative z-10">
+        <!-- Emblem Graphic Placeholder (SVG) -->
+        <div class="mx-auto w-16 h-16 mb-3 bg-blue-900 text-white rounded-full flex items-center justify-center shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v1H4v-1zm0 0V7m16 3V7" />
+            </svg>
+        </div>
+        
+        <h1 class="text-3xl font-black text-blue-900 tracking-tight drop-shadow-sm">Jaagruk<span class="text-orange-600">Voter</span></h1>
+        <p class="text-gray-600 mt-2 text-sm font-medium">Empowering Democracy. Empowering You.</p>
+        <div class="w-16 h-1 bg-gradient-to-r from-orange-500 via-white to-green-600 mx-auto mt-4 rounded-full border border-gray-200"></div>
     </div>
 
     <!-- Login Form -->
-    <form id="loginForm" onsubmit="event.preventDefault();">
-        <label class="block mb-2 text-sm font-semibold text-gray-700" for="email">
-          Email Address
-        </label>
-        <input
-          id="email"
-          type="email"
-          required
-          class="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
-          placeholder="name@example.com"
-        />
+    <form id="loginForm" onsubmit="event.preventDefault();" class="relative z-10">
+        <div class="mb-5">
+            <label class="block mb-2 text-sm font-bold text-gray-700" for="email">
+                Voter ID / Email Address
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white shadow-inner"
+                  placeholder="Enter your email"
+                />
+            </div>
+        </div>
 
         <button
           id="loginBtn"
           type="submit"
-          class="w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-sky-200"
+          class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white py-3 rounded-lg font-bold transition-all transform hover:-translate-y-0.5 shadow-lg shadow-orange-200 flex items-center justify-center gap-2"
         >
-          <span>Login with Email</span>
+          <span>Secure Login</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
         </button>
     </form>
 
-    <div class="flex items-center my-6">
-      <div class="flex-1 border-t border-gray-200"></div>
-      <span class="px-3 text-xs font-medium text-gray-400 uppercase">Or</span>
-      <div class="flex-1 border-t border-gray-200"></div>
+    <div class="flex items-center my-6 relative z-10">
+      <div class="flex-1 border-t border-gray-300"></div>
+      <span class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider bg-white rounded-full border border-gray-200 py-1 mx-2">Or</span>
+      <div class="flex-1 border-t border-gray-300"></div>
     </div>
 
     <button
       id="guestBtn"
-      class="w-full bg-gray-800 hover:bg-gray-900 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200"
+      class="w-full bg-blue-900 hover:bg-blue-950 text-white py-3 rounded-lg font-bold transition-all transform hover:-translate-y-0.5 shadow-lg shadow-blue-200 flex items-center justify-center gap-2 relative z-10"
     >
       <span>Continue as Guest</span>
     </button>
 
     <!-- Error Message Container -->
-    <div id="error" class="mt-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded hidden opacity-0 transition-opacity duration-300"></div>
+    <div id="error" class="mt-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded hidden opacity-0 transition-opacity duration-300 relative z-10 shadow-sm"></div>
 
-    <p class="text-xs text-gray-400 mt-6 text-center">
-      Administrator? <a href="admin-login.html" class="text-sky-600 hover:text-sky-800 hover:underline font-medium">Access Admin Panel</a>
-    </p>
+    <div class="mt-8 text-center relative z-10">
+        <p class="text-xs text-gray-500">
+            Secure • Transparent • Independent
+        </p>
+        <p class="text-xs text-gray-400 mt-2">
+            Administrator? <a href="admin-login.html" class="text-orange-600 hover:text-orange-800 hover:underline font-semibold">Access Portal</a>
+        </p>
+    </div>
   </div>
 
+  <!-- Footer Strip -->
+  <div class="fixed bottom-0 w-full h-2 bg-gradient-to-r from-orange-500 via-white to-green-600 z-50"></div>
+
+<!-- LOGIC SECTION - UNCHANGED -->
 <script>
   const API_BASE = "https://jaagrukvoter-backend-2.onrender.com";
   
@@ -88,13 +157,14 @@
           if (isLoading) {
               const originalText = btn.querySelector('span').innerText;
               btn.dataset.originalText = originalText;
-              btn.innerHTML = `<div class="loader"></div> Processing...`;
+              // Updated loader styling is in CSS
+              btn.innerHTML = `<div class="loader"></div> <span class="ml-2">Processing...</span>`;
               btn.disabled = true;
-              btn.classList.add('opacity-75', 'cursor-not-allowed');
+              btn.classList.add('opacity-90', 'cursor-not-allowed');
           } else {
               btn.innerHTML = `<span>${btn.dataset.originalText || 'Submit'}</span>`;
               btn.disabled = false;
-              btn.classList.remove('opacity-75', 'cursor-not-allowed');
+              btn.classList.remove('opacity-90', 'cursor-not-allowed');
           }
       },
       showError: (msg) => {
